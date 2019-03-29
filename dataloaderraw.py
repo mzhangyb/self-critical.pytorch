@@ -69,7 +69,8 @@ class DataLoaderRaw():
 
             n = 1
             for root, dirs, files in os.walk(self.folder_path, topdown=False):
-                for file in files:
+                # CHANGES
+                for file in sorted(files):
                     fullpath = os.path.join(self.folder_path, file)
                     if isImage(fullpath):
                         self.files.append(fullpath)
@@ -107,8 +108,14 @@ class DataLoaderRaw():
                 img = np.concatenate((img, img, img), axis=2)
 
             img = img[:,:,:3].astype('float32')/255.0
-            img = torch.from_numpy(img.transpose([2,0,1])).cuda()
-            img = preprocess(img)
+            img = torch.from_numpy(img.transpose([2,0,1]))#.cuda()
+            # CHANGE
+            #print(img)
+            #print(img.type())
+            #device = torch.device('cuda:0')
+            #img = img.to(device)
+            #print(img)
+            img = preprocess(img).cuda()
             with torch.no_grad():
                 tmp_fc, tmp_att = self.my_resnet(img)
 
